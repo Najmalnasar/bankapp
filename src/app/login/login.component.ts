@@ -10,9 +10,10 @@ export class LoginComponent implements OnInit {
   //database
 
   aim = "best banking partner"
-  accno = "account number"
+  accnum = "account number"
   acno=""
   pswd=""
+ 
 
   database = {
     1000:{acno:1000,uname:"najmal",password:1000,balance:10000},
@@ -25,19 +26,28 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
 
+
   acnoChange(event:any){
-    this.acno = event.targer.value
-    console.log(this.acno);
-    
+  this.acno = event.target.value
+  console.log(this.acno);
+  
+  
   }
+
   pswdChange(event:any){
     this.pswd = event.target.value
     console.log(this.pswd);
-    
   }
-   
-   login(){
-     alert("loging....")
-   }
+
+ login(){
+   alert("login clicked")
+ }
+
+
+
+
+
+
+
 
 }
