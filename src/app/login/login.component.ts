@@ -1,5 +1,8 @@
+import { tokenize } from '@angular/compiler/src/ml_parser/lexer';
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { DataService } from '../service/data.service';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +17,13 @@ export class LoginComponent implements OnInit {
   accnum = "account number"
   acno=""
   pswd=""
+
+  //loginform
+
+  loginForm =  this.fb.group({
+    acno:['',[Validators.required,Validators.pattern('[0-9]*')]],
+    pswd:['',[Validators.required,Validators.pattern('[A-Za-z0-9 ]*')]]
+  })
  
 
   database:any = {
@@ -22,58 +32,73 @@ export class LoginComponent implements OnInit {
     1002:{acno:1002,uname:"najiya",password:1002,balance:13000}
   }
 
-  constructor(private router:Router) { }
+  constructor(private router:Router,private ds:DataService,private fb:FormBuilder) { }
 
   ngOnInit(): void {
   }
 
 
-  acnoChange(event:any){
-  this.acno = event.target.value
-  console.log(this.acno);
+  // acnoChange(event:any){
+  // this.acno = event.target.value
+  // console.log(this.acno);
   
   
-  }
+  // }
 
-  pswdChange(event:any){
-    this.pswd = event.target.value
-    console.log(this.pswd);
-  }
+  // pswdChange(event:any){
+  //   this.pswd = event.target.value
+  //   console.log(this.pswd);
+  // }
 
  login(){
 
-  
-  
-   var acno = this.acno
-   console.log(acno);
-   var pswd = this.pswd
+   var acno = this.loginForm.value.acno
+  //  console.log(acno);
+   var pswd = this.loginForm.value.pswd
+   if(this.loginForm.valid){
+    
+    this.ds.login(acno,pswd)
+    .subscribe((result:any)=>{
+      if (result){
+        localStorage.setItem('currentAcno',JSON.stringify(result.currentAcno))
+        localStorage.setItem('currentUser',JSON.stringify(result.currentUser))
+        localStorage.setItem("token",JSON.stringify(result.token))
 
-   let database = this.database
-
-   if(acno in database){
-
-    if(pswd == database[acno]["password"]){
-
-      alert("login succefully")
-      this.router.navigateByUrl("home")
-
+        alert(result.message)
+        this.router.navigateByUrl("home")
+      }
+    },
+    (result)=>{
+      alert(result.error.message)
     }
-
-    else{
-      alert("inncorrect password")
-    }
+    )}
+   
+    else{"invalid form"}
 
    }
-   else{
-     alert("user doesnot exist!!!!")
-   }
- }
+  }
 
+  
+   // call login in dataservice
+   
+  //  let database = this.database
 
+ 
 
+  //  if(acno in database){
 
+  //   if(pswd == database[acno]["password"]){
 
+     
 
+  //   }
 
+  //   else{
+  //     alert("inncorrect password")
+  //   }
 
-}
+  //  }
+  //  else{
+  //    alert("user doesnot exist!!!!")
+  //  }
+ 
